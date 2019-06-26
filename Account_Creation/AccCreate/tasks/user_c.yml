@@ -1,0 +1,23 @@
+- name: Create and add user to the group
+  user:
+    name: 'user_c'
+    password: "{{pass | password_hash('sha512')}}"
+    home: '/home/user_c'
+    shell: '/bin/bash'
+    state: present
+  become: true
+
+- name: Adding privileges to the users
+  lineinfile:
+    path: '/etc/sudoers'
+    line: "{{item}} ALL=(ALL) ALL"
+    regexp: "^{{item}}"
+  with_items:
+    - user_c
+  become: true
+  
+- name: This is to ask user to change the password at login
+  shell: "{{item}}"
+  with_items:
+    - creates="/home/user_c" chage -d 0 user_c
+  when: user_creation.changed == true

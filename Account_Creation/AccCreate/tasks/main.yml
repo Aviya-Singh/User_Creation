@@ -1,0 +1,11 @@
+---
+# tasks file for AccCreate
+
+- include: user_a.yml
+  tags: user_a
+
+- include: user_b.yml
+  tags: user_b
+
+- include: user_c
+  tags: user_c

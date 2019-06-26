@@ -1,0 +1,35 @@
+- name: Creating group
+  group:
+    name: CyberArk
+    state: present
+  become: true
+
+- name: Create and add user to the group
+  user:
+    name: "{{item}}"
+    password: "{{pass | password_hash('sha512')}}"
+    group: CyberArk
+    home: "/home/{{item}}"
+    shell: '/bin/bash'
+    state: present
+  with_items:
+    - LNXCYBBRKGLS
+  become: true
+
+- name: Adding privileges to the users
+  lineinfile:
+    path: '/etc/sudoers'
+    line: "{{item}}"
+    regexp: "^{{item}}"
+  with_items:
+    - Cmnd_Alias PASSWD = /bin/passwd
+  become: true
+
+- name: Adding privileges to the users
+  lineinfile:
+    path: '/etc/sudoers'
+    line: "{{item}} ALL=(ALL) NOPASSWD: PASSWD"
+    regexp: "^{{item}}"
+  with_items:
+    - LNXCYBBRKGLS
+  become: true

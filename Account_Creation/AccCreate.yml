@@ -1,0 +1,5 @@
+---
+- name: Creating user acounts
+  hosts: linux
+  roles:
+    - AccCreate

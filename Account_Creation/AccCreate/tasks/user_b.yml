@@ -1,0 +1,26 @@
+- name: Create group
+  group:
+    name: group_b
+    state: present
+  become: true
+
+- name: Create and add user to the group
+  user:
+    name: "{{item}}"
+    password: "{{pass | password_hash('sha512')}}"
+    home: "/home/{{item}}"
+    groups: group_b
+    shell: '/bin/bash'
+    state: present
+  with_items:
+    - user_b
+  become: true
+
+- name: Adding privileges to the users
+  lineinfile:
+    path: '/etc/sudoers'
+    line: "{{item}} ALL=(ALL) ALL"
+    regexp: "^{{item}}"
+  with_items:
+    - user_b
+  become: true
